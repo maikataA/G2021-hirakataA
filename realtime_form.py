@@ -105,8 +105,9 @@ class Ui_MainWindow(object):
         self.sld_J.valueChanged.connect(MainWindow.slot2)
 
         # チェックボックス
-        #self.cbA = QtWidgets.QCheckBox('Check Box', self.centralwidget)
-        #self.cbA.setGeometry(100, 200, 20 ,20)
+        self.cbA = QtWidgets.QCheckBox('Noise AI', self.centralwidget)
+        self.cbA.setGeometry(500, 80, 150 ,50)
+        self.cbA.stateChanged.connect(MainWindow.slot3)
         self.cbB = QtWidgets.QCheckBox('百均イヤホン', self.centralwidget)
         self.cbB.setGeometry(350, 80, 150 ,50)
         self.cbB.stateChanged.connect(MainWindow.slot4)

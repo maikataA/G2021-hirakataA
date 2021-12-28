@@ -4,6 +4,7 @@ import struct
 import copy
 from PyQt5 import QtWidgets, QtCore
 from realtime_form import Ui_MainWindow
+from realtime_AI import Noise_detection_AI
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -18,7 +19,7 @@ class MainWindow(QtWidgets.QMainWindow):
     OVERFLOW_LIMIT = 20480  # Inputのバッファーの閾値
 
     def __init__(self, parent=None):
-        # 増幅量関連の定義　
+        # 増幅量関連の定義
         self.cnt_mag = (1, 2, 6, 12, 23, 46, 93, 186, 325, 464, 512)
         self.cnt_bwmag = (1, 4, 6, 11, 23, 47, 93, 139, 139)
         self.ls_reset = []
@@ -80,6 +81,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.right = np.load(self.RIGHT_PATH)  # 百均イヤホン左
 
         self.FLAG = False  # ON/OFFのフラグ
+        self.ai_flag = False
         self.hyaku_flag = False
         self.in_frames = 0
         self.out_frames = 0
@@ -100,11 +102,19 @@ class MainWindow(QtWidgets.QMainWindow):
         self.r_mag = np.append(np.append(self.r_mag, [0]), self.r_mag[:0:-1])
 
         self.in_data = np.array([], dtype='int16')
+        self.my_in_data = np.array([], dtype='int16')
+        self.my_data = np.array([], dtype='int16')
         self.l_out = np.zeros(256, dtype='int16')
         self.r_out = np.zeros(256, dtype='int16')
 
+        self.two_sec = 88200  # 2sec
+        self.noising = 'other'
+
         self.up = np.linspace(0, 1, 256)
         self.down = np.linspace(1, 0, 256)
+
+        self.my_ai = Noise_detection_AI()
+        self.slot2()
 
         # タイマーセット
         self.timer = QtCore.QTimer()
@@ -115,18 +125,31 @@ class MainWindow(QtWidgets.QMainWindow):
         # インプットからのデータ読み込み
         if self.in_stream.get_read_available() >= 1024:
             input = self.in_stream.read(1024, exception_on_overflow=False)
-            self.in_data = np.append(
-                self.in_data, np.frombuffer(input, dtype='int16'))
+            self.in_data = np.append(self.in_data, np.frombuffer(input, dtype='int16'))
             self.in_frames += 1024
+
         # インプットデータのフレーム数が1024を超えたら
         if self.in_frames >= 1024:
+
+            self.my_data = np.append(self.my_data, self.in_data)
+            if len(self.my_data) > self.two_sec:
+                if self.ai_flag == True:
+                    self.noising = self.my_ai.jdg_start(self.my_data)
+                self.my_data = np.array([], dtype='int16')
+
             left_data = self.in_data[:2047:2]
             right_data = self.in_data[1:2048:2]
 
             if self.FLAG:
-                self.slot2()
-                left_data = np.fft.ifft(np.fft.fft(left_data) * self.l_mag).real.astype('int16')
-                right_data = np.fft.ifft(np.fft.fft(right_data) * self.r_mag).real.astype('int16')
+                if self.ai_flag == False:
+                    left_data = np.fft.ifft(np.fft.fft(left_data) * self.l_mag).real.astype('int16')
+                    right_data = np.fft.ifft(np.fft.fft(right_data) * self.r_mag).real.astype('int16')
+                elif self.ai_flag == True and self.noising == 'other':
+                    left_data = np.fft.ifft(np.fft.fft(left_data) * self.l_mag).real.astype('int16')
+                    right_data = np.fft.ifft(np.fft.fft(right_data) * self.r_mag).real.astype('int16')
+                else:
+                    left_data = np.fft.ifft(np.fft.fft(left_data) * (self.l_mag/2)).real.astype('int16')
+                    right_data = np.fft.ifft(np.fft.fft(right_data) * (self.r_mag/2)).real.astype('int16')
 
             self.l_out[-256:] = self.l_out[-256:] * \
                 self.down + left_data[0:256] * self.up
@@ -208,6 +231,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.l_mag = np.append(np.append(self.l_mag, [0]), self.l_mag[:0:-1])
         self.r_mag = np.append(np.append(self.r_mag, [0]), self.r_mag[:0:-1])
 
+    def slot3(self, state):
+        if (QtCore.Qt.Checked == state):
+            self.ai_flag = True
+        else:
+            self.ai_flag = False
 
     def slot4(self, state):
         if (QtCore.Qt.Checked == state):
