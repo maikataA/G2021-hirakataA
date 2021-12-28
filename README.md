@@ -10,7 +10,7 @@
 
 このリポジトリには 2 つのツールが入っています．1 つ目`main.py`はイヤホンの周波数特性を測定するためのツールです．
 
-![demo](https://github.com/maikataA/G2021-hirakataA/blob/main/Img/1.gij)
+![demo](https://github.com/maikataA/G2021-hirakataA/blob/main/Img/1.gif)
 
 2 つ目`realtime.py`はイヤホンから取り込んだ音声を周波数ごと（10 種類・10 段階）に増幅するためのツールです．
 
