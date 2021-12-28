@@ -75,20 +75,22 @@ class MainWindow(QtWidgets.QMainWindow):
                                       input_device_index=self.INPUT_INDEX)
 
         # 測定データ(ndarray)読み込み
-        calib = np.load(self.CALIBRATE_PATH)  # いい音イヤホン
-        left = np.load(self.LEFT_PATH)  # 百均イヤホン右
-        right = np.load(self.RIGHT_PATH)  # 百均イヤホン左
+        self.calib = np.load(self.CALIBRATE_PATH)  # いい音イヤホン
+        self.left = np.load(self.LEFT_PATH)  # 百均イヤホン右
+        self.right = np.load(self.RIGHT_PATH)  # 百均イヤホン左
 
         self.FLAG = False  # ON/OFFのフラグ
+        self.hyaku_flag = False
         self.in_frames = 0
         self.out_frames = 0
 
         # 周波数ごとの倍率で最も大きい値を取得する
-        max = np.max([calib / left, calib / right])
+        max = np.max(self.calib)
 
         # maxで割って倍率を０〜１の間に収める
-        self.l_mag = calib / left / max
-        self.r_mag = calib / right / max
+        self.l_mag = self.calib / max
+        self.r_mag = self.calib / max
+
         # FFT用に測定データを加工
         self.l_mag = np.array(self.l_mag) * self.OUTPUT_FIX
         self.r_mag = np.array(self.r_mag) * self.OUTPUT_FIX
@@ -122,6 +124,7 @@ class MainWindow(QtWidgets.QMainWindow):
             right_data = self.in_data[1:2048:2]
 
             if self.FLAG:
+                self.slot2()
                 left_data = np.fft.ifft(np.fft.fft(left_data) * self.l_mag).real.astype('int16')
                 right_data = np.fft.ifft(np.fft.fft(right_data) * self.r_mag).real.astype('int16')
 
@@ -205,14 +208,30 @@ class MainWindow(QtWidgets.QMainWindow):
         self.l_mag = np.append(np.append(self.l_mag, [0]), self.l_mag[:0:-1])
         self.r_mag = np.append(np.append(self.r_mag, [0]), self.r_mag[:0:-1])
 
-        # テスト用
-        # print(vol)
-        # print(self.sum_vol)
-        # print(self.l_mag)
-        # print(self.r_mag)
-        # print(self.sum_vol_add[1][:])
-        # print(self.resum_vol_add)
-        #print(len(self.l_mag[-self.cnt_mag[9]+1 :]))
+
+    def slot4(self, state):
+        if (QtCore.Qt.Checked == state):
+            max = np.max([self.calib / self.left, self.calib / self.right])
+            self.l_mag = self.calib / self.left / max
+            self.r_mag = self.calib / self.right / max
+            self.l_mag = np.array(self.l_mag) * self.OUTPUT_FIX
+            self.r_mag = np.array(self.r_mag) * self.OUTPUT_FIX
+            self.l_save = copy.copy(self.l_mag)
+            self.r_save = copy.copy(self.r_mag)
+            self.l_mag = np.append(np.append(self.l_mag, [0]), self.l_mag[:0:-1])
+            self.r_mag = np.append(np.append(self.r_mag, [0]), self.r_mag[:0:-1])
+            self.slot2()
+        else:
+            max = np.max(self.calib)
+            self.l_mag = self.calib / max
+            self.r_mag = self.calib / max
+            self.l_mag = np.array(self.l_mag) * self.OUTPUT_FIX
+            self.r_mag = np.array(self.r_mag) * self.OUTPUT_FIX
+            self.l_save = copy.copy(self.l_mag)
+            self.r_save = copy.copy(self.r_mag)
+            self.l_mag = np.append(np.append(self.l_mag, [0]), self.l_mag[:0:-1])
+            self.r_mag = np.append(np.append(self.r_mag, [0]), self.r_mag[:0:-1])
+            self.slot2()
 
 
 if __name__ == '__main__':

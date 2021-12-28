@@ -107,8 +107,9 @@ class Ui_MainWindow(object):
         # チェックボックス
         #self.cbA = QtWidgets.QCheckBox('Check Box', self.centralwidget)
         #self.cbA.setGeometry(100, 200, 20 ,20)
-        #self.cbB = QtWidgets.QCheckBox('Check Box', self.centralwidget)
-        #self.cbB.setGeometry(100, 250, 20 ,20)
+        self.cbB = QtWidgets.QCheckBox('百均イヤホン', self.centralwidget)
+        self.cbB.setGeometry(350, 80, 150 ,50)
+        self.cbB.stateChanged.connect(MainWindow.slot4)
         #self.cbC = QtWidgets.QCheckBox('Check Box', self.centralwidget)
         #self.cbC.setGeometry(100, 300, 20 ,20)
 
