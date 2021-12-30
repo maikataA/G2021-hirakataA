@@ -2,6 +2,7 @@ import pyaudio
 import numpy as np
 import struct
 import copy
+import sys
 from PyQt5 import QtWidgets, QtCore
 from realtime_form import Ui_MainWindow
 from realtime_AI import Noise_detection_AI
@@ -75,6 +76,14 @@ class MainWindow(QtWidgets.QMainWindow):
                                       frames_per_buffer=1024,
                                       input_device_index=self.INPUT_INDEX)
 
+        self.my_stream = self.pa.open(format=pyaudio.paInt16,
+                                      channels=1,
+                                      rate=self.RATE,
+                                      input=True,
+                                      output=False,
+                                      frames_per_buffer=1024,
+                                      input_device_index=self.INPUT_INDEX)
+
         # 測定データ(ndarray)読み込み
         self.calib = np.load(self.CALIBRATE_PATH)  # いい音イヤホン
         self.left = np.load(self.LEFT_PATH)  # 百均イヤホン右
@@ -125,13 +134,14 @@ class MainWindow(QtWidgets.QMainWindow):
         # インプットからのデータ読み込み
         if self.in_stream.get_read_available() >= 1024:
             input = self.in_stream.read(1024, exception_on_overflow=False)
+            myput = self.my_stream.read(1024, exception_on_overflow=False)
             self.in_data = np.append(self.in_data, np.frombuffer(input, dtype='int16'))
+            self.my_data = np.append(self.my_data, np.frombuffer(myput, dtype='int16'))
             self.in_frames += 1024
 
         # インプットデータのフレーム数が1024を超えたら
         if self.in_frames >= 1024:
 
-            self.my_data = np.append(self.my_data, self.in_data)
             if len(self.my_data) > self.two_sec:
                 if self.ai_flag == True:
                     self.noising = self.my_ai.jdg_start(self.my_data)
@@ -148,8 +158,8 @@ class MainWindow(QtWidgets.QMainWindow):
                     left_data = np.fft.ifft(np.fft.fft(left_data) * self.l_mag).real.astype('int16')
                     right_data = np.fft.ifft(np.fft.fft(right_data) * self.r_mag).real.astype('int16')
                 else:
-                    left_data = np.fft.ifft(np.fft.fft(left_data) * (self.l_mag/2)).real.astype('int16')
-                    right_data = np.fft.ifft(np.fft.fft(right_data) * (self.r_mag/2)).real.astype('int16')
+                    left_data = np.fft.ifft(np.fft.fft(left_data) * (self.l_mag/3)).real.astype('int16')
+                    right_data = np.fft.ifft(np.fft.fft(right_data) * (self.r_mag/3)).real.astype('int16')
 
             self.l_out[-256:] = self.l_out[-256:] * \
                 self.down + left_data[0:256] * self.up
