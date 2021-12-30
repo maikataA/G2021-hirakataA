@@ -115,9 +115,10 @@ $ python realtime.py
 
 ## バージョン
 
-- v1.0.0
-- v1.1.0
-- v1.2.0
+- [v1.0.0](https://github.com/maikataA/G2021-hirakataA/tree/v1.0.0)
+- [v1.1.0](https://github.com/maikataA/G2021-hirakataA/tree/v1.1.0)
+- [v1.2.0](https://github.com/maikataA/G2021-hirakataA/tree/v1.2.0)
+  - [v1.2.1](https://github.com/maikataA/G2021-hirakataA/tree/v1.2.1)
 
 詳細は[こちら](https://github.com/maikataA/G2021-hirakataA/blob/main/version_note.md)
 

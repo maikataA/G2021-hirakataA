@@ -4,11 +4,11 @@
 
 バージョンはGitHubのtagで管理しています．
 
-## v1.0.0
+## [v1.0.0](https://github.com/maikataA/G2021-hirakataA/tree/v1.0.0)
 
 ツールの公開
 
-## v1.1.0
+## [v1.1.0](https://github.com/maikataA/G2021-hirakataA/tree/v1.1.0)
 
 ### 機能の追加
 
@@ -20,10 +20,19 @@
 
 従来は，`realtime.py`の**ON/OFF**ボタンを押した後，スライダーの位置を1度変更しなければ増幅が開始されませんでしたが，本バージョンからは**ON/OFF**ボタンを押した直後に増幅が開始されます．
 
-## v1.2.0
+## [v1.2.0](https://github.com/maikataA/G2021-hirakataA/tree/v1.2.0)
 
 ### 機能の追加
 
 - 騒音検知AIを実装
 
 データセット[ESC-50](https://qiita.com/cvusk/items/61cdbce80785eaf28349#augmentation)から独自に選別した判断基準により，AIが騒音と判断した場合，増幅量を1/3にします．本機能は**Noise AI**チェックボックスのON/OFFにより動作いたします．詳細は[こちら](https://github.com/maikataA/G2021-hirakataA/blob/main/save_AI/develop_note.md)
+
+
+## [v1.2.1](https://github.com/maikataA/G2021-hirakataA/tree/v1.2.1)
+
+### 使いやすさの向上
+
+- GitHubのtagへの移動方法追加
+
+`README.md`および`version_note.md`で，各バージョンをクリックすると各バージョンのページへ飛べるように変更．
