@@ -14,7 +14,7 @@
 
 2 つ目`realtime.py`はイヤホンから取り込んだ音声を周波数ごと（10 種類・10 段階）に増幅するためのツールです．
 
-![demo](https://github.com/maikataA/G2021-hirakataA/blob/main/Img/3.png)
+![demo](https://github.com/maikataA/G2021-hirakataA/blob/main/Img/4.png)
 
 ## 環境
 
@@ -71,7 +71,7 @@ $ python main.py
 
 ****
 
-1つめは，音質の良いイヤホンを持っているが，音質の悪いイヤホンで本ツールを使用する場合です．その場合は，音質の良いイヤホンで**校正イヤホン測定**をどちらかの耳で測定して下さい．また，**百均イヤホン測定**を両耳で測定して下さい．保存するファイル名はデフォルトを推奨します．
+1つめは，音質の良いイヤホンを持っているが，音質の悪いイヤホンで本ツールを使用する場合です．その場合は，音質の良いイヤホンで**校正イヤホン測定**をどちらかの耳で測定して下さい．また，音質の悪いイヤホンで**百均イヤホン測定**を両耳で測定して下さい．保存するファイル名はデフォルトを推奨します．
 
 `realtime.py`を実行した際は**百均イヤホン**のチェックボックスにチェックを入れてご使用下さい．
 
@@ -111,11 +111,21 @@ class MainWindow(QtWidgets.QMainWindow):
 $ python realtime.py
 ```
 
-**ON/OFF**ボタンを押すと増幅が開始されます．百均イヤホンのチェックボックス，増幅量はお好みでどうぞ．
+**ON/OFF**ボタンを押すと増幅が開始されます．百均イヤホンのチェックボックス，騒音検知AI，増幅量はお好みでどうぞ．
 
 ## 参考ウェブサイト
 
 - [python で百均イヤホンを高音質化！](https://hamataku.netlify.app/post/earphone/)
+- [やさしい AI の始め方](https://poncotuki.com/ai-ml/ai-voicedlml/)
+- [ディープラーニングで音声分類](https://qiita.com/cvusk/items/61cdbce80785eaf28349#augmentation)
+- [音声分類をいろいろなモデルや特徴量でやってみた](https://qiita.com/kshina76/items/5686923dee2889beba7c)
+- [Pythonの並列処理を理解したい［マルチスレッド編］](https://zenn.dev/ryo_kawamata/articles/python-concurrent-thread)
+- [機械学習のための音声の特徴量ざっくりメモ (Librosa ,numpy)](https://qiita.com/yutalfa/items/dbd172138db60d461a56)
+- [「FFmpeg」をダウンロード、インストール、パスを通す](https://nagaragawa-r.com/download-install-pass-ffmpeg/)
+
+## 騒音検知AIに使用したデータセット
+
+- [ESC-50](https://qiita.com/cvusk/items/61cdbce80785eaf28349#augmentation)
 
 ## ライセンス
 
